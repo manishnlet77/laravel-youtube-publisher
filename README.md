@@ -60,6 +60,17 @@ YOUTUBE_PUBLISHER_CLIENT_SECRET="your-client-secret"
 YOUTUBE_PUBLISHER_REDIRECT_URI="${APP_URL}/youtube-publisher/callback"
 ```
 
+## Interactive Sandbox Demo 🎮
+Want to test video and shorts uploading instantly without writing any code? We've built an Interactive Sandbox directly into the package!
+
+1. Enable the sandbox in your `.env`:
+```env
+YOUTUBE_PUBLISHER_SANDBOX_ENABLED=true
+```
+2. Visit `/youtube-publisher` in your browser (e.g., `http://localhost:8000/youtube-publisher` or `http://192.168.1.5/your-app/youtube-publisher`).
+3. Click **Connect YouTube** to authenticate.
+4. Use the beautiful UI to upload normal videos or YouTube Shorts directly from your browser!
+
 ## Usage 💻
 
 ### Authentication
