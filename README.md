@@ -1,17 +1,19 @@
 <div align="center">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png" alt="YouTube Logo" width="120">
-    <h1>Laravel YouTube Publisher 🚀</h1>
-    <p><i>A powerful, elegant, and production-ready Laravel package for automating YouTube Video and Shorts uploads via the official YouTube Data API v3.</i></p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png" alt="YouTube API Laravel Logo" width="120">
+    <h1>Laravel YouTube Publisher 🚀 <br><small>Upload Videos & Shorts via YouTube Data API v3</small></h1>
+    <p><i>The ultimate Laravel package to automate YouTube video uploads, manage YouTube Shorts, set custom thumbnails, and handle Google OAuth 2.0 seamlessly.</i></p>
     
     <a href="https://packagist.org/packages/manishnlet77/laravel-youtube-publisher"><img src="https://img.shields.io/packagist/v/manishnlet77/laravel-youtube-publisher.svg?style=for-the-badge&logo=laravel" alt="Latest Version on Packagist"></a>
     <a href="https://packagist.org/packages/manishnlet77/laravel-youtube-publisher"><img src="https://img.shields.io/packagist/dt/manishnlet77/laravel-youtube-publisher.svg?style=for-the-badge&color=success" alt="Total Downloads"></a>
-    <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.1+-777BB4.svg?style=for-the-badge&logo=php" alt="PHP Version"></a>
-    <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-10.x|11.x-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel Version"></a>
+    <a href="https://php.net"><img src="https://img.shields.io/badge/PHP-8.1+-777BB4.svg?style=for-the-badge&logo=php" alt="PHP Version Requirement"></a>
+    <a href="https://laravel.com"><img src="https://img.shields.io/badge/Laravel-10.x|11.x-FF2D20.svg?style=for-the-badge&logo=laravel" alt="Laravel Framework Compatibility"></a>
 </div>
 
 <br>
 
-Perfect for platforms that need to auto-publish videos, manage playlists, set thumbnails, and handle OAuth 2.0 seamlessly.
+**Keywords:** `laravel youtube api`, `laravel youtube upload`, `youtube shorts api`, `laravel google oauth`, `youtube data api v3`, `laravel video upload`, `auto publish youtube`
+
+Perfect for CMS platforms, content creators, and agencies that need to auto-publish YouTube videos, manage playlists, set thumbnails, and keep tokens refreshed automatically in the background.
 
 ## ✨ Features 
 
