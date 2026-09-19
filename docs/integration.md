@@ -28,7 +28,23 @@ Route::get('/youtube/callback', function (Request $request) {
 });
 ```
 
-## 2. Uploading Videos & Shorts
+## 2. Google Cloud Production Setup (Important!)
+
+When you create your OAuth Consent Screen in Google Cloud, its default Publishing Status is **"Testing"**. 
+
+**⚠️ The 7-Day Limit Warning:**
+If your app stays in "Testing" status, Google will force your `refresh_token` to expire every 7 days. This means you will have to re-authenticate every week, which breaks automated background uploading!
+
+**How to go live permanently:**
+1. In Google Cloud Console, go to **Google Auth Platform -> Audience**.
+2. Under "Publishing status", click the **"Publish app"** button to push it to **"In production"**.
+3. **Do I need to pass Google's Verification Process?** 
+   - **NO.** If you are the only one using this app to upload to your own channel, you do *not* need to submit it for verification. 
+   - When you log in, Google will show a scary "Unverified App" warning. Just click **Advanced -> Go to App (unsafe)** and continue. 
+   - Because it is in "Production" status, your refresh token will now last **forever**!
+   - You *only* need verification if you plan to let random public users log into your app with their Google accounts.
+
+## 3. Uploading Videos & Shorts
 
 Once authenticated, you can upload videos anywhere in your Laravel project (e.g., inside a Controller or a queued Job).
 
