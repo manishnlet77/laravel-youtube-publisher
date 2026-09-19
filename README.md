@@ -1,112 +1,145 @@
 # Laravel YouTube Publisher 🚀
 
-![Laravel Version](https://img.shields.io/badge/Laravel-10.x_|_11.x_|_12.x-red.svg?logo=laravel)
-![PHP Version](https://img.shields.io/badge/PHP-%5E8.1-blue.svg?logo=php)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+A powerful, elegant, and production-ready Laravel package for automating YouTube Video and Shorts uploads via the official YouTube Data API v3. 
 
-A production-ready, SEO-optimized Laravel Composer package for authenticated YouTube publishing (Video & Shorts) via Google OAuth 2.0. Stop struggling with the heavy official Google API PHP Client and use this elegant, Laravel-native wrapper for the YouTube Data API v3!
+Perfect for platforms that need to auto-publish videos, manage playlists, set thumbnails, and handle OAuth 2.0 seamlessly.
 
-## Features 🔥
-- **Google OAuth 2.0 Integration**: Seamlessly connect your users' YouTube accounts.
-- **Normal Video & YouTube Shorts Upload**: Upload regular videos or Shorts natively.
-- **Resumable Uploads**: Handle large video files safely without memory exhaustion.
-- **Thumbnail Publishing**: Set custom thumbnails for your uploads.
-- **Playlists Management**: Create playlists and add your uploaded videos directly.
-- **Database-Ready Credentials**: Securely store user access/refresh tokens.
-- **No Extra Dependencies**: Uses Laravel's built-in `Http` facade.
+## Features ✨
+- **Bulk Upload Support**: Resumable chunked uploads for large video files.
+- **YouTube Shorts**: Explicit support and auto-tagging for YouTube Shorts.
+- **Auto Token Refresh**: Authenticate once, and the package automatically refreshes your token in the background forever.
+- **Interactive Sandbox**: A beautiful built-in UI to test uploads instantly without writing code.
+- **Diagnostic Tools**: Built-in Artisan command to safely test API quotas and connections.
+- **Thumbnails & Playlists**: API methods to easily set custom thumbnails and manage playlists.
 
-## Installation 📦
+---
 
-1. Install the package via Composer:
+# Zero to End Setup Guide 📖
+
+Follow these steps exactly to go from absolute zero to fully automated YouTube uploads!
+
+## Step 1: Installation
+
+Install the package via Composer:
 ```bash
 composer require manishnlet77/laravel-youtube-publisher
 ```
 
-2. Publish the configuration file and migrations:
+Run the database migrations. This creates a `youtube_credentials` table to securely store your OAuth tokens:
 ```bash
-php artisan vendor:publish --tag="youtube-publisher-config"
 php artisan migrate
 ```
 
-## Google Cloud Console Setup 🛠️
-
-To use this package, you need to create a project in Google Cloud and enable the YouTube Data API v3.
-
-### Step 1: Create a Project
-Go to the [Google Cloud Project Create Page](https://console.cloud.google.com/projectcreate) and create a new project.
-
-### Step 2: Enable the API
-Go to the [YouTube Data API v3 Library](https://console.cloud.google.com/apis/library/youtube.googleapis.com) and click **Enable**.
-
-### Step 3: Configure OAuth Consent Screen
-Go to the [OAuth Consent Screen](https://console.cloud.google.com/apis/credentials/consent).
-- Choose **External** (unless you are a Google Workspace user).
-- Fill in the App name, Support email, and Developer contact information.
-- Add the `.../auth/youtube.upload` scope.
-
-### Step 4: Create Credentials
-Go to **Credentials** -> **Create Credentials** -> **OAuth client ID**.
-- Application type: **Web application**
-- Authorized redirect URIs: `https://your-domain.com/youtube-publisher/callback` (or your local dev URL).
-- Copy your **Client ID** and **Client Secret**.
-
-## Configuration ⚙️
-
-Add your credentials to your Laravel `.env` file:
-
-```env
-YOUTUBE_PUBLISHER_CLIENT_ID="your-client-id"
-YOUTUBE_PUBLISHER_CLIENT_SECRET="your-client-secret"
-YOUTUBE_PUBLISHER_REDIRECT_URI="${APP_URL}/youtube-publisher/callback"
+Publish the configuration file (optional):
+```bash
+php artisan vendor:publish --tag="youtube-publisher-config"
 ```
 
-## Interactive Sandbox Demo 🎮
-Want to test video and shorts uploading instantly without writing any code? We've built an Interactive Sandbox directly into the package!
+## Step 2: Google Cloud Setup
 
-1. Enable the sandbox in your `.env`:
+You must create an OAuth application in Google Cloud to get your credentials.
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
+2. Create a New Project.
+3. Go to **APIs & Services -> Library**, search for **YouTube Data API v3**, and click **Enable**.
+4. Go to **Google Auth Platform -> Branding** (or OAuth Consent Screen) and configure the consent screen. 
+5. **CRITICAL STEP FOR PRODUCTION:** 
+   - Go to **Google Auth Platform -> Audience**.
+   - Under "Publishing status", click **Publish app** to set it to "In production". 
+   - *(If you leave it in "Testing", Google will force your refresh token to expire every 7 days and your auto-uploads will break!)*
+   - You do **not** need to submit it for verification if you are only uploading to your own channel.
+6. Go to **APIs & Services -> Credentials**.
+7. Click **Create Credentials -> OAuth client ID**.
+   - Application type: **Web application**
+   - Authorized redirect URIs: Add your application's callback URL (e.g., `http://localhost:8000/youtube-publisher/callback` or your production URL).
+8. Copy the **Client ID** and **Client Secret**.
+
+## Step 3: Environment Configuration
+
+Add your Google credentials to your Laravel `.env` file:
+
 ```env
+YOUTUBE_PUBLISHER_CLIENT_ID="your-google-client-id"
+YOUTUBE_PUBLISHER_CLIENT_SECRET="your-google-client-secret"
+YOUTUBE_PUBLISHER_REDIRECT_URI="${APP_URL}/youtube-publisher/callback"
+
+# Enable this to use the built-in UI for testing!
 YOUTUBE_PUBLISHER_SANDBOX_ENABLED=true
 ```
-2. Visit `/youtube-publisher` in your browser (e.g., `http://localhost:8000/youtube-publisher` or `http://192.168.1.5/your-app/youtube-publisher`).
-3. Click **Connect YouTube** to authenticate.
-4. Use the beautiful UI to upload normal videos or YouTube Shorts directly from your browser!
 
-## Usage 💻
+## Step 4: Authentication & Sandbox
 
-### Authentication
-Generate the OAuth URL and redirect the user:
+To upload videos, the package needs permission to access your YouTube channel.
+
+1. Ensure `YOUTUBE_PUBLISHER_SANDBOX_ENABLED=true` is in your `.env`.
+2. Visit `/youtube-publisher` in your browser (e.g., `http://localhost:8000/youtube-publisher`).
+3. Click the **Connect YouTube** button.
+4. Log in with your Google account. *(If Google warns you that the app is unverified, click **Advanced -> Go to App (unsafe)**).*
+5. You will be redirected back with a success message! Your token is now securely saved in the database.
+
+## Step 5: Test the Connection
+
+We include a diagnostic Artisan command to ensure your API limits, tokens, and configurations are perfectly set up before you write any code.
+
+Run this command in your terminal:
+```bash
+php artisan youtube:test
+```
+This will attempt to upload a tiny built-in dummy video as a **Private** video to your channel. If it succeeds, your integration is 100% ready!
+
+## Step 6: Code Integration
+
+You can now automate uploads anywhere in your Laravel app (Controllers, Jobs, Commands).
+
+### Uploading a Video or Short
+
 ```php
 use Manishnlet77\YouTubePublisher\Facades\YouTubePublisher;
+use Manishnlet77\YouTubePublisher\DTO\VideoMetadata;
 
-return redirect(YouTubePublisher::auth()->getAuthUrl());
-```
+$absolutePath = storage_path('app/videos/my_video.mp4');
 
-### Video Uploading
-```php
-use Manishnlet77\YouTubePublisher\Facades\YouTubePublisher;
-
-$video = YouTubePublisher::videos()->upload(
-    file_path: storage_path('app/videos/my_video.mp4'),
-    title: 'My Awesome Laravel Video',
-    description: 'Uploading via manishnlet77/laravel-youtube-publisher! #laravel #youtube',
-    privacy: 'private' // public, private, or unlisted
+// 1. Prepare the Metadata
+$metadata = new VideoMetadata(
+    title: "My Awesome Video",       // REQUIRED
+    description: "Video desc...",    // REQUIRED
+    hashtags: ['laravel', 'php'],    // REQUIRED
+    privacy: 'public'                // Optional: 'public', 'private', or 'unlisted'
 );
 
-echo "Video ID: " . $video['id'];
+// 2. Upload Normal Video
+$response = YouTubePublisher::videos()->upload($absolutePath, $metadata);
+
+// OR Upload YouTube Short
+// $response = YouTubePublisher::shorts()->upload($absolutePath, $metadata);
+
+echo "Uploaded! Video ID: " . $response['id'];
 ```
 
-### Shorts Uploading
-Uploading a Short is essentially a video upload that adheres to YouTube's Shorts guidelines (vertical format, <= 60 seconds).
+### Setting a Thumbnail
 ```php
-$short = YouTubePublisher::shorts()->upload(
-    file_path: storage_path('app/videos/my_short.mp4'),
-    title: 'My First Short',
-    description: 'This is a short! #shorts'
-);
+$thumbnailPath = storage_path('app/images/thumb.jpg');
+YouTubePublisher::thumbnails()->set('YOUTUBE_VIDEO_ID', $thumbnailPath);
 ```
 
-## Support & Documentation 📚
-Detailed documentation can be found in the `docs/` folder of this repository.
+### Managing Playlists
+```php
+// Create a playlist
+$playlist = YouTubePublisher::playlists()->create(
+    title: 'Laravel Tutorials', 
+    description: 'Learn Laravel', 
+    privacy: 'public'
+);
 
-## License 📜
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+// Add a video to it
+YouTubePublisher::playlists()->addVideo($playlist['id'], 'YOUTUBE_VIDEO_ID');
+```
+
+## Troubleshooting & Common Errors
+
+* **`quotaExceeded`**: YouTube strictly limits API usage to 10,000 units per day. Uploading one video costs 1,600 units (approx. 6 videos a day). You must wait 24 hours or request a quota increase from Google.
+* **`invalid_grant`**: Your refresh token expired or was revoked. Visit `/youtube-publisher` and log in again.
+* **`401 Unauthorized`**: You did not enable the YouTube Data API v3 in your Google Cloud project.
+
+## License
+MIT License.
